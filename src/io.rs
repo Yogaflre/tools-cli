@@ -1,18 +1,23 @@
-use std::{fs::OpenOptions, io::Write};
+use std::{
+    fs::OpenOptions,
+    io::{Read, Write},
+};
 
 pub enum Type<'a> {
-    Console,
-    File(&'a str),
+    Console(Option<&'a str>),
+    File(&'a str), // path
 }
 
-// TODO
-// #[macro_export]
-// macro_rules! output {
-// }
+pub fn input_file(path: &str) -> String {
+    let mut file = OpenOptions::new().read(true).open(path).unwrap();
+    let mut buffer = String::new();
+    file.read_to_string(&mut buffer).unwrap();
+    return buffer;
+}
 
 pub fn output(content: String, t: Type) {
     match t {
-        Type::Console => output_console(content),
+        Type::Console(_) => output_console(content),
         Type::File(path) => output_file(content, path),
     }
 }

@@ -1,5 +1,5 @@
 # tools-cli
-Development Tools in Rust
+Development Tool
 
 ## help
 USAGE:

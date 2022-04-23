@@ -1,7 +1,7 @@
 include!("../src/time/mod.rs");
 
 #[cfg(test)]
-mod format {
+mod formatter_test {
     use crate::formatter;
 
     #[test]
