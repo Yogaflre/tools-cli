@@ -10,7 +10,7 @@ pub fn now() -> String {
 pub fn convert(time: &str) -> String {
     let datetime;
     if let Ok(number) = time.parse::<i64>() {
-        datetime = Local.timestamp_millis(number);
+        datetime = Local.timestamp_millis_opt(number).unwrap(); // FIXME unwrap
     } else if let Ok(t) = Local.datetime_from_str(&time, STANDARD_DATETIME) {
         datetime = t.with_timezone(&Local);
     } else if let Ok(t) = Local.datetime_from_str(&time, NORMAL_DATETIME) {

@@ -15,7 +15,7 @@ fn main() {
 
     let res: String = match matches.subcommand() {
         Some(("time", command)) => {
-            if command.is_present("now") {
+            if command.contains_id("now") {
                 formatter::now()
             } else {
                 formatter::convert(&get_value(&command))
@@ -23,20 +23,20 @@ fn main() {
         }
         Some(("coding", commamd)) => {
             let base_type = match (
-                commamd.is_present("base64"),
-                commamd.is_present("base32"),
-                commamd.is_present("base16"),
+                commamd.contains_id("base64"),
+                commamd.contains_id("base32"),
+                commamd.contains_id("base16"),
             ) {
                 (true, _, _) => BaseType::Base64,
                 (_, true, _) => BaseType::Base32,
                 (_, _, true) => BaseType::Base16,
                 _ => unreachable!(),
             };
-            let encode: bool = commamd.is_present("encoding");
+            let encode: bool = commamd.contains_id("encoding");
             base::convert(&get_value(&commamd), base_type, encode)
         }
         Some(("json", command)) => {
-            if command.is_present("format") {
+            if command.contains_id("format") {
                 json::format(&get_value(&command))
             } else {
                 json::compress(&get_value(&command))
@@ -45,7 +45,7 @@ fn main() {
         _ => unreachable!(),
     };
 
-    let output_type = match matches.value_of("output") {
+    let output_type = match matches.get_one::<&str>("output") {
         Some(path) => Type::File(path),
         None => Type::Console(None),
     };
@@ -54,8 +54,10 @@ fn main() {
 
 fn get_value(cmd: &ArgMatches) -> String {
     return cmd
-        .value_of("VALUE")
+        .get_one::<&str>("VALUE")
         .map(|v| v.to_string())
-        .or(cmd.value_of("input").map(|path| io::input_file(&path)))
+        .or(cmd
+            .get_one::<&str>("input")
+            .map(|path| io::input_file(&path)))
         .unwrap();
 }

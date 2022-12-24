@@ -4,7 +4,7 @@ trait InputArgs {
     fn input_args(self, required: bool) -> Self;
 }
 
-impl InputArgs for Command<'_> {
+impl InputArgs for Command {
     fn input_args(self, required: bool) -> Self {
         self.arg(arg!([VALUE]).required(false))
             .arg(arg!(-i --input <PATH> "Input file path").required(false))
@@ -16,29 +16,28 @@ impl InputArgs for Command<'_> {
     }
 }
 
-pub fn cli() -> Command<'static> {
-    return Command::new("tools-cli")
-        .version("0.1.0")
-        .author("Yogafire <yogafirew@gmail.com>")
-        .about("Development tools")
+pub fn cli() -> Command {
+    return Command::new(env!("CARGO_PKG_NAME"))
+        .version(env!("CARGO_PKG_VERSION"))
+        .author(env!("CARGO_PKG_AUTHORS"))
+        .about(env!("CARGO_PKG_DESCRIPTION"))
         .arg_required_else_help(true)
         .subcommand(json_command())
         .subcommand(time_command())
         .subcommand(coding_command())
-        .arg(arg!(-i --input <PATH> "Input file path").required(false))
         .arg(arg!(-o --output <PATH> "Output file path").required(false));
 }
 
-fn time_command() -> Command<'static> {
+fn time_command() -> Command {
     Command::new("time")
         .about("Time tools")
-        .arg(arg!(-n --now "Current time").required_unless_present("input_args"))
+        .arg(arg!(-n --now "Current time"))
         .arg(arg!(-f --format "Format time").requires("input_args"))
         .group(ArgGroup::new("opt").args(&["now", "format"]).required(true))
         .input_args(false)
 }
 
-fn coding_command() -> Command<'static> {
+fn coding_command() -> Command {
     Command::new("coding")
         .about("Data coding tools")
         .arg(arg!(-e --encoding "Data encoding"))
@@ -59,7 +58,7 @@ fn coding_command() -> Command<'static> {
         .input_args(true)
 }
 
-fn json_command() -> Command<'static> {
+fn json_command() -> Command {
     Command::new("json")
         .about("Json tools")
         .arg(arg!(-f --format "Format json string"))
